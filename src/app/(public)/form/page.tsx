@@ -1,12 +1,31 @@
+'use client';
 import './form.css'
-import Form from "next/form";
 import {saveCar} from "@/server/serverActions";
+import {FormEvent, useState} from "react";
 
 const FormPage = () => {
+    const [errors, setErrors] = useState<string[]>([]);
+    const [message, setMessage] = useState("");
+
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+
+        const result = await saveCar(formData);
+
+        if (!result.success) {
+            setErrors(result.errors ?? []);
+            setMessage("");
+        } else {
+            setErrors([]);
+            setMessage("Car added successfully!");
+            e.currentTarget.reset();
+        }
+    };
 
     return (
         <div>
-            <Form action={saveCar}>
+            <form onSubmit={handleSubmit}>
                 <label>
                     <input type={"text"} name={'brand'} placeholder={'Brand'} />
                 </label>
@@ -17,7 +36,17 @@ const FormPage = () => {
                     <input type={"number"} name={'year'} placeholder={'year'}/>
                 </label>
                 <button>Add Car</button>
-            </Form>
+
+                {errors.length > 0 && (
+                    <ul style={{ color: "red" }}>
+                        {errors.map((err, i) => (
+                            <li key={i}>{err}</li>
+                        ))}
+                    </ul>
+                )}
+
+                {message && <p style={{ color: "green" }}>{message}</p>}
+            </form>
         </div>
     );
 };

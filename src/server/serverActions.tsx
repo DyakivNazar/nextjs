@@ -14,11 +14,16 @@ export const saveCar = async (formData: FormData) => {
     const { error, value } = carValidator.validate(carData, { abortEarly: false });
 
     if (error) {
-        throw new Error(
-            "Validation error: " + error.details.map((d) => d.message).join(", ")
-        );
+        return {
+            success: false,
+            errors: error.details.map((d) => d.message),
+        };
     }
+
     await addCar(value);
     revalidatePath("/");
     redirect("/");
+
+    return { success: true };
+
 }
