@@ -1,41 +1,23 @@
-'use client'
 import './form.css'
-import {useForm} from "react-hook-form";
-import {ICar} from "@/models/ICar";
-import {joiResolver} from "@hookform/resolvers/joi";
-import {carValidator} from "@/viladator/api.validator";
-import {useRouter} from "next/navigation";
-import {addCar} from "@/services/api.service";
+import Form from "next/form";
+import {saveCar} from "@/server/serverActions";
 
 const FormPage = () => {
-    const router = useRouter();
-    const {handleSubmit, register, formState:{errors, isValid}}
-        = useForm<ICar>({mode: 'all', resolver: joiResolver(carValidator)});
-
-    const customHandler = async (data: ICar)=>{
-        await addCar(data);
-        router.push('/');
-    }
 
     return (
         <div>
-            <form onSubmit={handleSubmit(customHandler)}>
+            <Form action={saveCar}>
                 <label>
-                    <input type="text" {...register('brand')}/>
-                    {errors.brand && <div>{errors.brand.message}</div>}
+                    <input type={"text"} name={'brand'} placeholder={'Brand'} />
                 </label>
-
                 <label>
-                    <input type="number" {...register('price')}/>
-                    {errors.price && <div>{errors.price.message}</div>}
+                    <input type={"number"} name={'price'} placeholder={'price'}/>
                 </label>
-
                 <label>
-                    <input type="number" {...register('year')}/>
-                    {errors.year && <div>{errors.year.message}</div>}
+                    <input type={"number"} name={'year'} placeholder={'year'}/>
                 </label>
-                <button disabled={!isValid}>Add car</button>
-            </form>
+                <button>Add Car</button>
+            </Form>
         </div>
     );
 };
