@@ -4,17 +4,14 @@ import {useForm} from "react-hook-form";
 import {ICar} from "@/models/ICar";
 import {joiResolver} from "@hookform/resolvers/joi";
 import {carValidator} from "@/viladator/api.validator";
-import {useRouter} from "next/navigation";
 import {addCarByServer} from "@/server/serverAction";
 
 const FormPage = () => {
-    const router = useRouter();
     const {handleSubmit, register, formState:{errors, isValid}}
         = useForm<ICar>({mode: 'all', resolver: joiResolver(carValidator)});
 
     const customHandler = async (data: ICar)=>{
         await addCarByServer(data);
-        router.push('/');
     }
 
     return (
