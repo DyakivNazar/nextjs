@@ -1,4 +1,3 @@
-'use client'
 import './form.css'
 import {useForm} from "react-hook-form";
 import {ICar} from "@/models/ICar";
