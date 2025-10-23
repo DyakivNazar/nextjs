@@ -3,6 +3,7 @@
 import {addCar} from "@/services/api.service";
 import {redirect} from "next/navigation";
 import {revalidatePath} from "next/cache";
+import {carValidator} from "@/viladator/api.validator";
 
 export const saveCar = async (formData: FormData) => {
     const brand = formData.get("brand") as string;
@@ -10,7 +11,14 @@ export const saveCar = async (formData: FormData) => {
     const year = Number(formData.get("year"));
 
     const carData = { brand, price, year };
-    await addCar(carData);
+    const { error, value } = carValidator.validate(carData, { abortEarly: false });
+
+    if (error) {
+        throw new Error(
+            "Validation error: " + error.details.map((d) => d.message).join(", ")
+        );
+    }
+    await addCar(value);
     revalidatePath("/");
     redirect("/");
 }
